@@ -16,17 +16,21 @@ void setPenalties();
 int _tmain(int argc, _TCHAR* argv[])
 {
 	setPenalties();
-	//create first state -  x(1,0,0);
-	
-	GameState initial = GameState(1, 0, 0);
-	gs::queue.push_back(&initial);
 
-	initial.fillQueue();
-	initial.fillEquation();
+	//create first state -  x(1,0,0);
+	GameState initial = GameState(1, 0, 0);
+	gs::queue.push_back(&initial);	//add as first gamestate
+
+	initial.fillQueue();			//build needed unknown variables to the queue
+	initial.fillEquation();			//build equation form it(single matrix row)
 
 	//do the same for every gamestate in the queue
-	//for (int i = 0; i < gs::queue.size(); i++)
-		//gs::queue[i]->fillQueue();
+	for (int i = 1; i < gs::queue.size(); i++)
+	{	
+		gs::queue[i]->fillQueue();
+		gs::queue[i]->fillEquation();
+	}
+		
 
 
 

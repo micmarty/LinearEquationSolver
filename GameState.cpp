@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include<iostream>
 #include <algorithm>
+#include<iomanip>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ GameState::GameState(int g, int a, int b)
 	c = 0;//intercept equals 0 at the beggining
 				//further some fractions will be added to that variable
 	positionInQueue = queue.size();
+	generatedStatesCount = 0;
 }
 
 bool GameState::elementFound(GameState* neededElement)
@@ -45,7 +47,7 @@ bool GameState::operator==(const GameState &r)
 
 void GameState::fillQueue()
 {
- 	printf("x(%d, %d, %d) = ", g, a, b);
+ 	//printf("x(%d, %d, %d) = ", g, a, b);
 	int e = g == 1 ? 2 : 1;			//e - enemy
 
 	//testing dice rolling result
@@ -60,9 +62,12 @@ void GameState::fillQueue()
 
 				//if no identical unknown game state is found, then add it to our queue
 				if (!elementFound(unknownState))
+				{
 					queue.push_back(unknownState);
-
-				printf("1/6*(%d, %d, %d) + ", e, a + d + penalty, b);
+					generetedStates.push_back(unknownState);
+					generatedStatesCount++;
+				}
+				//printf("1/6*(%d, %d, %d) + ", e, a + d + penalty, b);
 			}//else - if player 'g' is out of board, he WINS
 			else
 			{	
@@ -78,9 +83,12 @@ void GameState::fillQueue()
 
 				//if no identical unknown game state is found, then add it to our queue
 				if (!elementFound(unknownState))
+				{
 					queue.push_back(unknownState);
-
-				printf("1/6*(%d, %d, %d) + ", e, a, b + d + penalty);
+					generetedStates.push_back(unknownState);
+					generatedStatesCount++;
+				}
+				//printf("1/6*(%d, %d, %d) + ", e, a, b + d + penalty);
 			}//else - if player 'g' is out of board, he WINS
 			else
 			{
@@ -91,26 +99,47 @@ void GameState::fillQueue()
 		
 
 	}
-	cout << c << endl;
+	//cout << c << endl;
 	//cout << "\b\b\b\033[K" << endl;//deletes excessive ' + 'sign
+	//cout << generatedStatesCount << endl;
 }
 
 void GameState::fillEquation()
 {
-	for (int i = 0; i < queue.size(); i++){
-		if (i < positionInQueue)		//fill equation with 0 until proper position is reached
-			equation.push_back(0);
+	for (int i = 0; i < 10; i++)
+	{
+		//if (i < positionInQueue)		//fill equation with 0 until proper position is reached
+			//equation.push_back(0);
 		if (i == positionInQueue)		//if proper position, put 1 in here
 			equation.push_back(1);
-		else if (i > positionInQueue)	//every further element is substracted from 1
-			equation.push_back(-1 / 6.0);
-	}//all factors are pushed now
-	
+		else if (i != positionInQueue && generatedStatesCount > 0)
+		{
+			int notFound = 0;
+			for (int g_i = 0; g_i<generetedStates.size(); g_i++)
+			{
+				if (queue[i] == generetedStates[g_i])
+				{
+					equation.push_back(-1 / 6.0);	//every further element is substracted from 1
+					generatedStatesCount--;
+					break;
+				}
+				notFound++;
+			}
+			if (notFound == generetedStates.size()){
+				equation.push_back(0);
+			}
+			
+		}
+		else if(i > positionInQueue)
+		{
+			equation.push_back(0);
+		}
+		//all factors are pushed now
+	}
 	equation.push_back(c);				//now add an intercept at the end
-
-
 	//display row in matrix for that state
-	cout << endl << endl<< "equation like 1  -x  -y  -z = intercept" << endl;
+	//cout << endl << endl<< "equation like 1  -x  -y  -z = intercept" << endl;
 	for (int i = 0; i < equation.size(); i++)
-		cout << equation[i] << " ";
+		cout <<" "<<setprecision(2)<<setw(8)<<equation[i] ;
+	cout << endl << endl;
 }

@@ -14,6 +14,9 @@ private:
 	double c;		//intercept
 
 	int positionInQueue;
+	int generatedStatesCount;
+
+	vector<GameState*>generetedStates;
 	vector<double> equation;//holds factors(PL wspó³czynniki)
 
 public:
