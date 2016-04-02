@@ -46,8 +46,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 void setPenalties()
 {
+	 
 	//NO PENALTIES AT THIS TIME
-	vector<vector<int>> p = { { 4, 1 }, { 5, 1 } };	//p - penalties
+	vector<vector<int>> p = { { 2, -2 } };	//p - penalties
 	for (int p_i = 0; p_i < p.size(); p_i++)			//p_i - penalty index
 	{
 		GameState::gameBoard[p[p_i][0]] = p[p_i][1];						//set penalty on proper board tile, 

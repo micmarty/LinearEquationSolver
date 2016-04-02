@@ -14,7 +14,7 @@ private:
 	double c;		//intercept
 
 	int positionInQueue;
-	int generatedStatesCount;
+	int variablesUsed;
 
 	vector<GameState*>generetedStates;
 	vector<double> equation;//holds factors(PL wspó³czynniki)
@@ -31,7 +31,8 @@ public:
 	void fillQueue();
 	void fillEquation();
 	bool elementFound(GameState* neededElement);
-
+	bool elementFound(GameState* neededElement,int foundAt);
+	
 	//comparison operator
 	bool operator==(const GameState &r);
 };
