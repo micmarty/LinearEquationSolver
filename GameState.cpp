@@ -15,7 +15,7 @@ GameState::GameState(int g, int a, int b)
 
 	c = 0;//intercept equals 0 at the beggining
 				//further some fractions will be added to that variable
-	
+	positionInQueue = queue.size();
 }
 
 bool GameState::elementFound(GameState* neededElement)
@@ -43,7 +43,7 @@ bool GameState::operator==(const GameState &r)
 		return false;
 }
 
-void GameState::fillEquation()
+void GameState::fillQueue()
 {
  	printf("x(%d, %d, %d) = ", g, a, b);
 	int e = g == 1 ? 2 : 1;			//e - enemy
@@ -93,4 +93,24 @@ void GameState::fillEquation()
 	}
 	cout << c << endl;
 	//cout << "\b\b\b\033[K" << endl;//deletes excessive ' + 'sign
+}
+
+void GameState::fillEquation()
+{
+	for (int i = 0; i < queue.size(); i++){
+		if (i < positionInQueue)		//fill equation with 0 until proper position is reached
+			equation.push_back(0);
+		if (i == positionInQueue)		//if proper position, put 1 in here
+			equation.push_back(1);
+		else if (i > positionInQueue)	//every further element is substracted from 1
+			equation.push_back(-1 / 6.0);
+	}//all factors are pushed now
+	
+	equation.push_back(c);				//now add an intercept at the end
+
+
+	//display row in matrix for that state
+	cout << endl << endl<< "equation like 1  -x  -y  -z = intercept" << endl;
+	for (int i = 0; i < equation.size(); i++)
+		cout << equation[i] << " ";
 }

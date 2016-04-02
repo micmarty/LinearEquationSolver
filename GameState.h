@@ -2,26 +2,34 @@
 #include<vector>
 using namespace std;
 
-#define N 3		//board length
-#define END_OF_BOARD 0//value that means - 'if you are here, you won'
+#define N 3				//board length
+#define END_OF_BOARD 0	//value that means - 'if you are here, you won'
 
 class GameState
 {
 private:
-	int g;	//which player is rolling a dice in this turn
-	int a;	//1st player position
-	int b;	//2nd player position
-	double c;	//intercept
+	int g;			//which player is rolling a dice in this turn
+	int a;			//1st player position
+	int b;			//2nd player position
+	double c;		//intercept
+
+	int positionInQueue;
 	vector<double> equation;//holds factors(PL wspó³czynniki)
+
 public:
-	static vector<int> gameBoard;//na zapas zeby nie wyjsc za zakres
+	static vector<int> gameBoard;
 	static vector<GameState*> queue;
 
+	//must-have
 	GameState(int g, int a, int b);
 	~GameState();
 
+	//useful methods
+	void fillQueue();
 	void fillEquation();
 	bool elementFound(GameState* neededElement);
+
+	//comparison operator
 	bool operator==(const GameState &r);
 };
 
