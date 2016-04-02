@@ -1,5 +1,7 @@
 #include "GameState.h"
 #include<iostream>
+#include <algorithm>
+
 using namespace std;
 
 vector<int> GameState::gameBoard(N + 6, 1);
@@ -16,16 +18,25 @@ GameState::GameState(int g, int a, int b)
 	
 }
 
+bool GameState::elementFound(GameState* neededElement)
+{
+	for (int i = 0; i < GameState::queue.size(); i++){
+		if (*GameState::queue[i] == *neededElement)
+			return true;
+	}
+	return false;
+}
+
 GameState::~GameState()
 {
 	//nothing to deallocate
 }
 
-bool operator==(const GameState& l, const GameState& r)
+bool GameState::operator==(const GameState &r)
 {
-	bool equalPlayers = (l.g == r.g);
-	bool equalA = (l.a == r.a);
-	bool equalB = (l.b == r.b);
+	bool equalPlayers = (g == r.g);
+	bool equalA = (a == r.a);
+	bool equalB = (b == r.b);
 	if (equalPlayers && equalA && equalB)
 		return true;
 	else
@@ -48,7 +59,7 @@ void GameState::fillEquation()
 				GameState* unknownState = new GameState(e, a + d + penalty, b);
 
 				//if no identical unknown game state is found, then add it to our queue
-				if (find(queue.begin(), queue.end(), unknownState) == queue.end())
+				if (!elementFound(unknownState))
 					queue.push_back(unknownState);
 
 				printf("1/6*(%d, %d, %d) + ", e, a + d + penalty, b);
@@ -66,7 +77,7 @@ void GameState::fillEquation()
 				GameState* unknownState = new GameState(e, a, b + d + penalty);
 
 				//if no identical unknown game state is found, then add it to our queue
-				if (find(queue.begin(), queue.end(), unknownState) == queue.end())
+				if (!elementFound(unknownState))
 					queue.push_back(unknownState);
 
 				printf("1/6*(%d, %d, %d) + ", e, a, b + d + penalty);

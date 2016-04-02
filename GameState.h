@@ -19,9 +19,10 @@ public:
 
 	GameState(int g, int a, int b);
 	~GameState();
-	void fillEquation();
 
-	friend bool operator==(const GameState& l, const GameState& r);
+	void fillEquation();
+	bool elementFound(GameState* neededElement);
+	bool operator==(const GameState &r);
 };
 
 
