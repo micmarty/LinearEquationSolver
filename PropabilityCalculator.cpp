@@ -6,17 +6,23 @@
 #include"GameState.h"
 using namespace std;
 
+typedef GameState gs;
+
 void setPenalties();
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	setPenalties();
-	//GameState initial = GameState(1, 0, 0);
+	GameState initial = GameState(1, 0, 0);
+	initial.fillEquation();
 
-	for (int i = 0; i < GameState::gameBoard.size(); i++)
+	for (int i = 0; i < gs::queue.size(); i++)
+		gs::queue[i]->fillEquation();
+
+	/*for (int i = 0; i < GameState::gameBoard.size(); i++)
 	{
 		cout << GameState::gameBoard[i] << " ";
-	}cout << endl;
+	}cout << endl;*/
 	return 0;
 }
 

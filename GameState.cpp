@@ -3,7 +3,7 @@
 using namespace std;
 
 vector<int> GameState::gameBoard(N + 6, 1);
-vector<GameState> GameState::queue;
+vector<GameState*> GameState::queue;
 
 GameState::GameState(int g, int a, int b)
 {
@@ -14,7 +14,6 @@ GameState::GameState(int g, int a, int b)
 	c = 0;//intercept equals 0 at the beggining
 				//further some fractions will be added to that variable
 	
-	fillEquation();
 }
 
 GameState::~GameState()
@@ -35,7 +34,7 @@ bool operator==(const GameState& l, const GameState& r)
 
 void GameState::fillEquation()
 {
-	printf("x(%d, %d, %d) = ", g, a, b);
+ 	printf("x(%d, %d, %d) = ", g, a, b);
 	int e = g == 1 ? 2 : 1;			//e - enemy
 
 	//testing dice rolling result
@@ -46,7 +45,7 @@ void GameState::fillEquation()
 			if (gameBoard[a + d] != END_OF_BOARD)
 			{
 				int penalty = gameBoard[a + d] < 0 ? gameBoard[a + d] : 0;
-				GameState unknownState = GameState(e, a + d + penalty, b);
+				GameState* unknownState = new GameState(e, a + d + penalty, b);
 
 				//if no identical unknown game state is found, then add it to our queue
 				if (find(queue.begin(), queue.end(), unknownState) == queue.end())
@@ -56,8 +55,7 @@ void GameState::fillEquation()
 			}//else - if player 'g' is out of board, he WINS
 			else
 			{	
-				c += 1 / 6;			//
-				printf("1/6 + ");	//1 means that player nr 1 won
+				c += (1 / 6.0);	
 			}
 		}
 		if (g == 2)
@@ -65,7 +63,7 @@ void GameState::fillEquation()
 			if (gameBoard[b + d] != END_OF_BOARD)
 			{
 				int penalty = gameBoard[b + d] < 0 ? gameBoard[b + d] : 0;
-				GameState unknownState = GameState(e, a, b + d + penalty);
+				GameState* unknownState = new GameState(e, a, b + d + penalty);
 
 				//if no identical unknown game state is found, then add it to our queue
 				if (find(queue.begin(), queue.end(), unknownState) == queue.end())
@@ -75,11 +73,13 @@ void GameState::fillEquation()
 			}//else - if player 'g' is out of board, he WINS
 			else
 			{
-				c += 0;
-				printf("0/6 + ");//0 means that player nr 1 defeated
+				c += 0;	//0 means that player nr 1 defeated
 			}
+			
 		}
+		
 
 	}
-	cout << "\b\b\b\033[K" << endl;//deletes excessive ' + 'sign
+	cout << c << endl;
+	//cout << "\b\b\b\033[K" << endl;//deletes excessive ' + 'sign
 }

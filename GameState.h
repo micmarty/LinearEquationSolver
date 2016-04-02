@@ -11,17 +11,17 @@ private:
 	int g;	//which player is rolling a dice in this turn
 	int a;	//1st player position
 	int b;	//2nd player position
-	int c;	//intercept
+	double c;	//intercept
 	vector<double> equation;//holds factors(PL wspó³czynniki)
 public:
 	static vector<int> gameBoard;//na zapas zeby nie wyjsc za zakres
-	static vector<GameState> queue;
+	static vector<GameState*> queue;
 
 	GameState(int g, int a, int b);
 	~GameState();
 	void fillEquation();
 
-	friend bool operator==(const GameState& l, const GameState& p);
+	friend bool operator==(const GameState& l, const GameState& r);
 };
 
 
