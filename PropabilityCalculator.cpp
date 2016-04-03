@@ -6,6 +6,7 @@
 
 #include"GameState.h"
 #include"Matrix.h"
+#include"MonteCarloSimulation.h"
 using namespace std;
 
 //shortcut for such a long class name
@@ -18,35 +19,44 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	setPenalties();
 
-	//create first state -  x(1,0,0);
-	GameState initial = GameState(1, 0, 0);
-	gs::queue.push_back(&initial);	//add as first gamestate
+	////create first state -  x(1,0,0);
+	//GameState initial = GameState(1, 0, 0);
 
-	//initial.fillQueue();			//build needed unknown variables to the queue
-	//initial.fillEquation();			//build equation form it(single matrix row)
-	
-	//create our matrix, that is our main calculation's structure
-	Matrix M = Matrix();
+	////create our matrix, that is our main calculation's structure
+	//Matrix M = Matrix();
 
-	//do the same for every gamestate in the queue
-	for (int i = 0; i < gs::queue.size(); i++)
-	{	
-		gs::queue[i]->fillQueue();
-		
-	}
 
-	for (int i = 0; i < gs::queue.size(); i++)
-	{
-		gs::queue[i]->fillEquation();
-		M.pushRow(gs::queue[i]->getEquation());
-	}
-		
-	//all calculations'done
-	//now matrix is completely filled with data
+	//gs::queue.push_back(&initial);	//add as first gamestate
+	////do the same for every gamestate in the queue
+	//for (int i = 0; i < gs::queue.size(); i++)
+	//{	
+	//	gs::queue[i]->fillQueue();
+	//}
+	////loops can't be merged
+	//for (int i = 0; i < gs::queue.size(); i++)
+	//{
+	//	gs::queue[i]->fillEquation();
+	//	M.pushRow(gs::queue[i]->getEquation());
+	//}
+	//	
+	////all calculations'done
+	////now matrix is completely filled with data
 
-	//M.display();
-	M.gaussSeidel();
+	////make a copy before modifying it
+	//vector<vector<double>> copyofM= M.getMatrix();
+	//M.gaussSeidel();
+	//
+	////load matrix from copy
+	//M.loadMatrix(copyofM);
+	//M.gaussElimination();
 
+	////show results
+	//M.displayResults();
+
+
+	MonteCarloSimulation monte = MonteCarloSimulation();
+	monte.play();
+	monte.displayResult();
 
 	//helpful board displaying
 	cout << endl << endl<< "How this board looks like..." << endl;
@@ -58,11 +68,10 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 
 void setPenalties()
-{ //{ 4, -2 }, { 5, -2 }, { 7, -5 }, { 9, -3 }, { 14, -12 }, { 15, -2 }, { 17, -7 }, { 19, -8 }, { 21, -3 },
-//{ 22, -16 }, { 25, -9 }
-	 
+{
 	//NO PENALTIES AT THIS TIME
-	vector<vector<int>> p = { { 2, -1 }, { 4, -1 }, { 6, -1 }, { 11, -8 }, { 13, -10 }, { 15, -12 }, { 18, -13 }, { 20, -15 }, { 22, -17 }, { 24, -1 }, { 26, -3 } };	//p - penalties
+	vector<vector<int>> p = { { 2, -1 }, { 4, -1 }, { 6, -1 }, { 11, -1 }, { 13, -1 }, { 15, -14 }, { 20, -1 }, { 22, -1 }, { 24,
+		-1 }, { 26, -25 } };	//p - penalties
 	for (int p_i = 0; p_i < p.size(); p_i++)			//p_i - penalty index
 	{
 		GameState::gameBoard[p[p_i][0]] = p[p_i][1];						//set penalty on proper board tile, 
