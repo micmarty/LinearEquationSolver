@@ -32,6 +32,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	for (int i = 0; i < gs::queue.size(); i++)
 	{	
 		gs::queue[i]->fillQueue();
+		
 	}
 
 	for (int i = 0; i < gs::queue.size(); i++)
@@ -57,11 +58,11 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 
 void setPenalties()
-{
+{ //{ 4, -2 }, { 5, -2 }, { 7, -5 }, { 9, -3 }, { 14, -12 }, { 15, -2 }, { 17, -7 }, { 19, -8 }, { 21, -3 },
+//{ 22, -16 }, { 25, -9 }
 	 
 	//NO PENALTIES AT THIS TIME
-	vector<vector<int>> p = { { 4, -2 }, { 5, -2 }, { 7, -5 }, { 9, -3 }, { 14, -12 }, { 15, -2 }, { 17, -7 }, { 19, -8 }, { 21, -3 },
-	{ 22, -16 }, { 25, -9 } };	//p - penalties
+	vector<vector<int>> p = { { 2, -1 }, { 4, -1 }, { 6, -1 }, { 11, -8 }, { 13, -10 }, { 15, -12 }, { 18, -13 }, { 20, -15 }, { 22, -17 }, { 24, -1 }, { 26, -3 } };	//p - penalties
 	for (int p_i = 0; p_i < p.size(); p_i++)			//p_i - penalty index
 	{
 		GameState::gameBoard[p[p_i][0]] = p[p_i][1];						//set penalty on proper board tile, 

@@ -22,6 +22,8 @@ GameState::GameState(int g, int a, int b)
 	c = 0;//intercept equals 0 at the beggining
 				//further some fractions will be added to that variable
 	positionInQueue = queue.size();
+	generatedStates.reserve(6);	//tyle maksymalnie niewiadomych moze wygenerowac jeden stan
+	factors.assign(6, 0.0);
 	variablesUsed = 0;
 }
 
@@ -31,7 +33,6 @@ bool GameState::elementFound(GameState* neededElement,int foundAt)
 		if (*GameState::queue[i] == *neededElement && i == foundAt){
 			return true;
 		}
-			
 	}
 	return false;
 }
@@ -65,7 +66,7 @@ bool GameState::operator==(const GameState &r)
 
 void GameState::fillQueue()
 {
- 	printf("x(%d, %d, %d) = ", g, a, b);
+ 	//printf("x(%d, %d, %d) = ", g, a, b);
 	int e = g == 1 ? 2 : 1;			//e - enemy
 
 	//testing dice rolling result
@@ -77,15 +78,38 @@ void GameState::fillQueue()
 			{
 				int penalty = gameBoard[a + d] < 0 ? gameBoard[a + d] : 0;
 				GameState* unknownState = new GameState(e, a + d + penalty, b);
+				//przypisz nowemu stanowi prawdopodobienstwo 1/6
+				factors[d - 1] = 1 / 6.0;
 
-				//if no identical unknown game state is found, then add it to our queue
+				//jesli w queue nie ma tego stanu to dodaj go
 				if (!elementFound(unknownState))
 				{
 					queue.push_back(unknownState);
 				}
-				generetedStates.push_back(unknownState);
-				variablesUsed++;
-				printf("1/6*(%d, %d, %d) + ", e, a + d + penalty, b);
+				
+				//przeszukaj czy juz taka niewiadoma zostala wygenerowana
+				int notFound = 0;
+				int current = 0;
+				for (int placeInGeneratedStates = 0; placeInGeneratedStates < generatedStates.size(); placeInGeneratedStates++)
+				{
+					//jesli tak, to zwieksz wspolczynnik dla tego elemetu
+					if (*generatedStates[placeInGeneratedStates] == *unknownState)
+					{
+						factors[placeInGeneratedStates] += (1 / 6.0);
+						break;//wyjdz jak znajdzisz duplikat
+					}
+					else{
+						notFound++;//zliczaj niepowodzenia
+					}
+					current = placeInGeneratedStates;
+				}
+				//jesli nie znaleziono duplikatu to mozna go dodac do generatedStates i zwiekszyc ilosc wygenerowanych stanow
+				if (notFound == generatedStates.size())
+				{
+					generatedStates.push_back(unknownState);
+					variablesUsed++;
+				}
+				//printf("%lf*(%d, %d, %d) + ",factors[current], e, a + d + penalty, b);
 			}//else - if player 'g' is out of board, he WINS
 			else
 			{	
@@ -99,16 +123,39 @@ void GameState::fillQueue()
 				int penalty = gameBoard[b + d] < 0 ? gameBoard[b + d] : 0;
 				GameState* unknownState = new GameState(e, a, b + d + penalty);
 
-				//if no identical unknown game state is found, then add it to our queue
+				//przypisz nowemu stanowi prawdopodobienstwo 1/6
+				factors[d - 1] = 1 / 6.0;
+
+				//jesli w queue nie ma tego stanu to dodaj go
 				if (!elementFound(unknownState))
 				{
 					queue.push_back(unknownState);
-					
-					
 				}
-				generetedStates.push_back(unknownState); 
-				variablesUsed++;
-				printf("1/6*(%d, %d, %d) + ", e, a, b + d + penalty);
+
+				//przeszukaj czy juz taka niewiadoma zostala wygenerowana
+				int notFound = 0;
+				int current = 0;
+				for (int placeInGeneratedStates = 0; placeInGeneratedStates < generatedStates.size(); placeInGeneratedStates++)
+				{
+					//jesli tak, to zwieksz wspolczynnik dla tego elemetu
+					if (*generatedStates[placeInGeneratedStates] == *unknownState)
+					{
+						factors[placeInGeneratedStates] += (1 / 6.0);
+						break;//wyjdz jak znajdzisz duplikat
+					}
+					else{
+						notFound++;//zliczaj niepowodzenia
+					}
+					current = placeInGeneratedStates;
+				}
+				//jesli nie znaleziono duplikatu to mozna go dodac do generatedStates i zwiekszyc ilosc wygenerowanych stanow
+				if (notFound == generatedStates.size())
+				{
+					generatedStates.push_back(unknownState);
+					variablesUsed++;
+				}
+				//zle dziala
+				//printf("%lf*(%d, %d, %d) + ",factors[current], e, a, b + d + penalty);
 			}//else - if player 'g' is out of board, he WINS
 			else
 			{
@@ -119,7 +166,10 @@ void GameState::fillQueue()
 		
 
 	}
-	cout << c << endl;
+	//cout << c << endl;
+	for (int i = 0; i <variablesUsed; i++)
+		cout << factors[i] << " ";
+	cout << "|" << endl;
 	//cout << "\b\b\b\033[K" << endl;//deletes excessive ' + 'sign
 	//cout << variablesUsed << endl;
 }
@@ -138,17 +188,17 @@ void GameState::fillEquation()
 		{
 			int notFound = 0;	//how many misses during lookup 
 
-			for (int g_i = 0; g_i < generetedStates.size(); g_i++)
+			for (int g_i = 0; g_i < generatedStates.size(); g_i++)
 			{
-				if (elementFound(generetedStates[g_i],i))
+				if (elementFound(generatedStates[g_i],i))
 				{
-					equation.push_back(-1 / 6.0);	//every further element is substracted from 1
+					equation.push_back(-factors[g_i]);	//every further element is substracted from 1
 					variablesUsed--;
 					break;
 				}
 				notFound++;
 			}
-			if (notFound == generetedStates.size()){
+			if (notFound == generatedStates.size()){
 				equation.push_back(0);
 			}
 
@@ -161,7 +211,7 @@ void GameState::fillEquation()
 	//display row in matrix for that state
 	//cout << endl << endl<< "equation like 1  -x  -y  -z = intercept" << endl;
 	
-	/*for (int i = 0; i < equation.size(); i++)
-		cout << " " << setprecision(2) << setw(8) << equation[i];
-	cout << endl << endl;*/
+	//for (int i = 0; i < equation.size(); i++)
+		//cout << " " << setprecision(2) << setw(8) << equation[i];
+	//cout << endl << endl;
 }

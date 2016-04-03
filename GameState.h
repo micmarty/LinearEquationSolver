@@ -2,7 +2,7 @@
 #include<vector>
 using namespace std;
 
-#define N 27			//board length
+#define N 28			//board length
 #define END_OF_BOARD 0	//value that means - 'if you are here, you won'
 
 class GameState
@@ -16,8 +16,10 @@ private:
 	int positionInQueue;
 	int variablesUsed;
 
-	vector<GameState*>generetedStates;
+	vector<GameState*>generatedStates;
+	vector<double> factors;
 	vector<double> equation;//holds factors(PL wspó³czynniki)
+
 
 public:
 	static vector<int> gameBoard;
