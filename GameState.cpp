@@ -8,6 +8,11 @@ using namespace std;
 vector<int> GameState::gameBoard(N + 6, 1);
 vector<GameState*> GameState::queue;
 
+vector<double> GameState::getEquation()
+{
+	return equation;
+}
+
 GameState::GameState(int g, int a, int b)
 {
 	this->g = g;
@@ -122,7 +127,7 @@ void GameState::fillQueue()
 
 void GameState::fillEquation()
 {
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 9; i++)
 	{
 		//if proper position, put '1' in here (executes only once)
 		if (i == positionInQueue)		
@@ -158,7 +163,8 @@ void GameState::fillEquation()
 	equation.push_back(c);				//now add an intercept at the end
 	//display row in matrix for that state
 	//cout << endl << endl<< "equation like 1  -x  -y  -z = intercept" << endl;
-	for (int i = 0; i < equation.size(); i++)
+	
+	/*for (int i = 0; i < equation.size(); i++)
 		cout << " " << setprecision(2) << setw(8) << equation[i];
-	cout << endl << endl;
+	cout << endl << endl;*/
 }

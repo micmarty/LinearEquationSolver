@@ -5,6 +5,7 @@
 #include<iomanip>
 
 #include"GameState.h"
+#include"Matrix.h"
 using namespace std;
 
 //shortcut for such a long class name
@@ -21,18 +22,24 @@ int _tmain(int argc, _TCHAR* argv[])
 	GameState initial = GameState(1, 0, 0);
 	gs::queue.push_back(&initial);	//add as first gamestate
 
-	initial.fillQueue();			//build needed unknown variables to the queue
-	initial.fillEquation();			//build equation form it(single matrix row)
+	//initial.fillQueue();			//build needed unknown variables to the queue
+	//initial.fillEquation();			//build equation form it(single matrix row)
+	
+	//create our matrix, that is our main calculation's structure
+	Matrix M = Matrix();
 
 	//do the same for every gamestate in the queue
-	for (int i = 1; i < gs::queue.size(); i++)
+	for (int i = 0; i < gs::queue.size(); i++)
 	{	
 		gs::queue[i]->fillQueue();
 		gs::queue[i]->fillEquation();
+		M.pushRow(gs::queue[i]->getEquation());
 	}
 		
+	//all calculations'done
+	//now matrix is completely filled with data
 
-
+	M.display();
 
 
 	//helpful board displaying
@@ -48,7 +55,7 @@ void setPenalties()
 {
 	 
 	//NO PENALTIES AT THIS TIME
-	vector<vector<int>> p = { { 2, -2 } };	//p - penalties
+	vector<vector<int>> p = { { 1, 1 }, { 2, 1 } };	//p - penalties
 	for (int p_i = 0; p_i < p.size(); p_i++)			//p_i - penalty index
 	{
 		GameState::gameBoard[p[p_i][0]] = p[p_i][1];						//set penalty on proper board tile, 

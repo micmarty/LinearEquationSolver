@@ -32,6 +32,8 @@ public:
 	void fillEquation();
 	bool elementFound(GameState* neededElement);
 	bool elementFound(GameState* neededElement,int foundAt);
+
+	vector<double> getEquation();
 	
 	//comparison operator
 	bool operator==(const GameState &r);
