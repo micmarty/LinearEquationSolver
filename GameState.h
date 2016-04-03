@@ -2,7 +2,7 @@
 #include<vector>
 using namespace std;
 
-#define N 3				//board length
+#define N 27			//board length
 #define END_OF_BOARD 0	//value that means - 'if you are here, you won'
 
 class GameState

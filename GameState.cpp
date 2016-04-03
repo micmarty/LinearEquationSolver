@@ -65,7 +65,7 @@ bool GameState::operator==(const GameState &r)
 
 void GameState::fillQueue()
 {
- 	//printf("x(%d, %d, %d) = ", g, a, b);
+ 	printf("x(%d, %d, %d) = ", g, a, b);
 	int e = g == 1 ? 2 : 1;			//e - enemy
 
 	//testing dice rolling result
@@ -85,7 +85,7 @@ void GameState::fillQueue()
 				}
 				generetedStates.push_back(unknownState);
 				variablesUsed++;
-				//printf("1/6*(%d, %d, %d) + ", e, a + d + penalty, b);
+				printf("1/6*(%d, %d, %d) + ", e, a + d + penalty, b);
 			}//else - if player 'g' is out of board, he WINS
 			else
 			{	
@@ -108,7 +108,7 @@ void GameState::fillQueue()
 				}
 				generetedStates.push_back(unknownState); 
 				variablesUsed++;
-				//printf("1/6*(%d, %d, %d) + ", e, a, b + d + penalty);
+				printf("1/6*(%d, %d, %d) + ", e, a, b + d + penalty);
 			}//else - if player 'g' is out of board, he WINS
 			else
 			{
@@ -119,14 +119,14 @@ void GameState::fillQueue()
 		
 
 	}
-	//cout << c << endl;
+	cout << c << endl;
 	//cout << "\b\b\b\033[K" << endl;//deletes excessive ' + 'sign
 	//cout << variablesUsed << endl;
 }
 
 void GameState::fillEquation()
 {
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < queue.size(); i++)
 	{
 		//if proper position, put '1' in here (executes only once)
 		if (i == positionInQueue)		
@@ -140,8 +140,6 @@ void GameState::fillEquation()
 
 			for (int g_i = 0; g_i < generetedStates.size(); g_i++)
 			{
-				if (g == 2 && a == 2 && b == 1)
-					int a = 1;
 				if (elementFound(generetedStates[g_i],i))
 				{
 					equation.push_back(-1 / 6.0);	//every further element is substracted from 1

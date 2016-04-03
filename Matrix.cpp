@@ -32,8 +32,8 @@ void Matrix::display()
 
 void Matrix::gaussSeidel()
 {
-	const int n = 9;
-	const int column_b = 9;
+	const int n = GameState::queue.size();
+	const int column_b = n;
 
 	for (int k = 0; k < n - 1; k++)
 	{
@@ -45,8 +45,8 @@ void Matrix::gaussSeidel()
 			M[i][column_b] -= m * M[k][column_b];
 		}
 	}
-	double x[9];
-	x[8] = M[n - 1][column_b] / M[n - 1][column_b - 1];
+	double *x = new double[n];
+	x[n-1] = M[n - 1][column_b] / M[n - 1][column_b - 1];
 	for (int i = n - 2; i >= 0; i--)
 	{
 		x[i] = M[i][column_b];//i albo l
@@ -56,7 +56,7 @@ void Matrix::gaussSeidel()
 		}
 		x[i] /= M[i][i];
 	}
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < n; i++)
 	{
 		cout <<setprecision(36)<< "x[" << i << "] = " << x[i] << endl;
 	}

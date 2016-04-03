@@ -32,6 +32,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	for (int i = 0; i < gs::queue.size(); i++)
 	{	
 		gs::queue[i]->fillQueue();
+	}
+
+	for (int i = 0; i < gs::queue.size(); i++)
+	{
 		gs::queue[i]->fillEquation();
 		M.pushRow(gs::queue[i]->getEquation());
 	}
@@ -39,7 +43,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//all calculations'done
 	//now matrix is completely filled with data
 
-	M.display();
+	//M.display();
 	M.gaussSeidel();
 
 
@@ -56,7 +60,8 @@ void setPenalties()
 {
 	 
 	//NO PENALTIES AT THIS TIME
-	vector<vector<int>> p = { { 1, 1 }, { 2, 1 } };	//p - penalties
+	vector<vector<int>> p = { { 4, -2 }, { 5, -2 }, { 7, -5 }, { 9, -3 }, { 14, -12 }, { 15, -2 }, { 17, -7 }, { 19, -8 }, { 21, -3 },
+	{ 22, -16 }, { 25, -9 } };	//p - penalties
 	for (int p_i = 0; p_i < p.size(); p_i++)			//p_i - penalty index
 	{
 		GameState::gameBoard[p[p_i][0]] = p[p_i][1];						//set penalty on proper board tile, 
