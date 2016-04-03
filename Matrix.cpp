@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include"GameState.h"
 #include<iostream>
 #include<iomanip>
 using namespace std;
@@ -27,4 +28,37 @@ void Matrix::display()
 			cout << "|" <<setprecision(3)<< setw(8) << M[y][x];
 		}cout << endl << endl;
 	}
+}
+
+void Matrix::gaussSeidel()
+{
+	const int n = 9;
+	const int column_b = 9;
+
+	for (int k = 0; k < n - 1; k++)
+	{
+		for (int i = k + 1; i < n; i++)
+		{
+			double m = M[i][k] / M[k][k];
+			for (int j = k + 1; j < n; j++)
+				M[i][j] -= m * M[k][j];
+			M[i][column_b] -= m * M[k][column_b];
+		}
+	}
+	double x[9];
+	x[8] = M[n - 1][column_b] / M[n - 1][column_b - 1];
+	for (int i = n - 2; i >= 0; i--)
+	{
+		x[i] = M[i][column_b];//i albo l
+		for (int j = i + 1; j < n; j++)
+		{
+			x[i] -= M[i][j] * x[j];
+		}
+		x[i] /= M[i][i];
+	}
+	for (int i = 0; i < 9; i++)
+	{
+		cout <<setprecision(36)<< "x[" << i << "] = " << x[i] << endl;
+	}
+	
 }

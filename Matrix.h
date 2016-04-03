@@ -11,5 +11,6 @@ public:
 	~Matrix();
 	void pushRow(vector<double>r);
 	void display();
+	void gaussSeidel();
 };
 

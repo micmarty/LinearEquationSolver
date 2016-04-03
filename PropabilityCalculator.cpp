@@ -40,6 +40,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//now matrix is completely filled with data
 
 	M.display();
+	M.gaussSeidel();
 
 
 	//helpful board displaying

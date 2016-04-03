@@ -82,7 +82,6 @@ void GameState::fillQueue()
 				if (!elementFound(unknownState))
 				{
 					queue.push_back(unknownState);
-					
 				}
 				generetedStates.push_back(unknownState);
 				variablesUsed++;
