@@ -1,6 +1,5 @@
 #include "MonteCarloSimulation.h"
 #include"GameState.h"
-#include<ctime>
 #include<iostream>
 #include<iomanip>
 using namespace std;
@@ -41,17 +40,20 @@ int MonteCarloSimulation::resultOfGame()
 			return LOOSE;
 	}
 }
-void MonteCarloSimulation::play()
+void MonteCarloSimulation::play(int iterations)
 {
-	srand(time(NULL));
-	for (int game = 0; game < 1000000; game++)
+	player1winsCounter = 0;			//clear that EVERY time
+	for (int game = 0; game < iterations; game++)
 	{
 		player1winsCounter += resultOfGame();
 	}
-	probability = player1winsCounter / 1000000.0;
+	probability = player1winsCounter / (double)iterations;
+	results.push_back(probability);
+	iterationsNumber.push_back(iterations);
 }
 
 void MonteCarloSimulation::displayResult()
 {
-	cout << "x(1,0,0) = Monte Carlo Simulation\t" << setprecision(36) << probability << endl;
+	for (int i = 0; i < results.size();i++)
+		cout << "x(1,0,0) = Monte Carlo Simulation\t" << setprecision(36) << results[i]<<" for "<<iterationsNumber[i]<<" iterations" << endl;
 }

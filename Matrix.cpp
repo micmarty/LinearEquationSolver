@@ -35,8 +35,8 @@ void Matrix::displayMatrix()
 
 void Matrix::displayResults()
 {
-	cout << "x(1,0,0) = Gaussian Elimination\t\t" << setprecision(36)  << x1[0] << endl;
-	cout << "x(1,0,0) = Gauss-Seidel        \t\t" << setprecision(36) << x2[0] << endl;
+	cout << "x(1,0,0) = Gauss-Seidel        \t\t" << setprecision(36) << x1[0] << endl;
+	cout << "x(1,0,0) = Gaussian Elimination\t\t" << setprecision(36)  << x2[0] << endl;
 }
 
 vector<vector<double>> Matrix::getMatrix()
@@ -63,8 +63,10 @@ void Matrix::gaussSeidel()
 			M[i][b_columnIndex] -= m * M[k][b_columnIndex];
 		}
 	}
+	//reserve memory for results
 	x1.assign(n, 0);
 	x1[n - 1] = M[n - 1][b_columnIndex] / M[n - 1][b_columnIndex - 1];
+
 	for (int i = n - 2; i >= 0; i--)
 	{
 		x1[i] = M[i][b_columnIndex];//i albo l

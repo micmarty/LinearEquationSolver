@@ -65,8 +65,6 @@ bool GameState::operator==(const GameState &r)
 
 void GameState::fillQueue()
 {
-	
-
  	//printf("x(%d, %d, %d) = ", g, a, b);
 	int e = g == 1 ? 2 : 1;			//e - enemy
 
@@ -79,95 +77,85 @@ void GameState::fillQueue()
 			{
 				int penalty = gameBoard[a + d] < 0 ? gameBoard[a + d] : 0;
 				GameState* unknownState = new GameState(e, a + d + penalty, b);
-				//przypisz nowemu stanowi prawdopodobienstwo 1/6
+
+				//new state has always default probability 1/6
 				factors[d - 1] = 1 / 6.0;
 
-				//jesli w queue nie ma tego stanu to dodaj go
+				//if unknowState isn't currently in queue
 				if (!elementFound(unknownState))
 				{
 					queue.push_back(unknownState);
 				}
 				
-				//przeszukaj czy juz taka niewiadoma zostala wygenerowana
+				//make sure that if some state is repeated, increase its probability by 1/6
+				//all is about that, for eaxample: 1/6*x(1,4,2) + 1/6*x(1,4,2) = 2/6*x(1,4,2);
 				int notFound = 0;
 				int current = 0;
 				for (int placeInGeneratedStates = 0; placeInGeneratedStates < generatedStates.size(); placeInGeneratedStates++)
 				{
-					//jesli tak, to zwieksz wspolczynnik dla tego elemetu
+					//if found the same state in generated vector, increase probability
 					if (*generatedStates[placeInGeneratedStates] == *unknownState)
 					{
 						factors[placeInGeneratedStates] += (1 / 6.0);
-						break;//wyjdz jak znajdzisz duplikat
+						break;						//break to stop further searching
 					}
 					else{
-						notFound++;//zliczaj niepowodzenia
+						notFound++;					//count fail comparisons
 					}
 					current = placeInGeneratedStates;
 				}
-				//jesli nie znaleziono duplikatu to mozna go dodac do generatedStates i zwiekszyc ilosc wygenerowanych stanow
+				//if no duplicates found, you can add it as new, unique state
 				if (notFound == generatedStates.size())
 				{
 					generatedStates.push_back(unknownState);
-					variablesUsed++;
+					variablesUsed++;				//also increase variable counter which means how many variables our object has generated
 				}
 				//printf("%lf*(%d, %d, %d) + ",factors[current], e, a + d + penalty, b);
 			}//else - if player 'g' is out of board, he WINS
 			else
-			{	
 				c += (1 / 6.0);	
-			}
 		}
 		if (g == 2)
 		{
+			//all comments are the same as aboveeee ^^^^^^
 			if (gameBoard[b + d] != END_OF_BOARD)
 			{
 				int penalty = gameBoard[b + d] < 0 ? gameBoard[b + d] : 0;
 				GameState* unknownState = new GameState(e, a, b + d + penalty);
 
-				//przypisz nowemu stanowi prawdopodobienstwo 1/6
 				factors[d - 1] = 1 / 6.0;
 
-				//jesli w queue nie ma tego stanu to dodaj go
 				if (!elementFound(unknownState))
 				{
 					queue.push_back(unknownState);
 				}
 
-				//przeszukaj czy juz taka niewiadoma zostala wygenerowana
 				int notFound = 0;
 				int current = 0;
 				for (int placeInGeneratedStates = 0; placeInGeneratedStates < generatedStates.size(); placeInGeneratedStates++)
 				{
-					//jesli tak, to zwieksz wspolczynnik dla tego elemetu
 					if (*generatedStates[placeInGeneratedStates] == *unknownState)
 					{
 						factors[placeInGeneratedStates] += (1 / 6.0);
-						break;//wyjdz jak znajdzisz duplikat
+						break;
 					}
 					else{
-						notFound++;//zliczaj niepowodzenia
+						notFound++;
 					}
 					current = placeInGeneratedStates;
 				}
-				//jesli nie znaleziono duplikatu to mozna go dodac do generatedStates i zwiekszyc ilosc wygenerowanych stanow
 				if (notFound == generatedStates.size())
 				{
 					generatedStates.push_back(unknownState);
 					variablesUsed++;
 				}
-				//zle dziala
-				//printf("%lf*(%d, %d, %d) + ",factors[current], e, a, b + d + penalty);
 			}//else - if player 'g' is out of board, he WINS
 			else
-			{
 				c += 0;	//0 means that player nr 1 defeated
-			}
-			
 		}
-		
-
 	}
 	
+	////commented displaying features, not useful now
 	//cout << c << endl;
 	//for (int i = 0; i <variablesUsed; i++)
 		//cout << factors[i] << " ";
@@ -178,10 +166,12 @@ void GameState::fillQueue()
 
 void GameState::fillEquation()
 {
-	//idz po kolumnach w macierzy(jeden wiersz)
+	//equation is supposed to look like this : 1 - x - y - z = 0
+
+	//for each column:
 	for (int i = 0; i < queue.size(); i++)
 	{
-		//if proper position, put '1' in here (executes only once)
+		//if proper position, put '1' in here (executes only once).  
 		if (i == positionInQueue)		
 			equation.push_back(1);
 
@@ -191,20 +181,21 @@ void GameState::fillEquation()
 		{
 			int notFound = 0;	//how many misses during lookup 
 
-			//dla kazdego wygenerowanego przez obiekt stanu
+			//for every generated state that our object added
 			for (int g_i = 0; g_i < generatedStates.size(); g_i++)
 			{
-				//sprawdz czy wystêpuje w queue
+				//seek if present in queue
 				if (elementFound(generatedStates[g_i],i))
 				{
 					equation.push_back(-factors[g_i]);	//every further element is substracted from 1
-					variablesUsed--;
+					variablesUsed--;			
 					break;
 				}
 				notFound++;
 			}
 			if (notFound == generatedStates.size()){
-				equation.push_back(0);
+				equation.push_back(0);					//zero for every non-generated state
+														//like : 1 - x - 0*a - 0*b - 0*c - y - z = 0
 			}
 
 		}
@@ -213,6 +204,8 @@ void GameState::fillEquation()
 		//all factors are pushed now
 	}
 	equation.push_back(c);				//now add an intercept at the end
+
+	////commented displaying features, not useful now
 	//display row in matrix for that state
 	//cout << endl << endl<< "equation like 1  -x  -y  -z = intercept" << endl;
 	

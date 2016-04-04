@@ -3,6 +3,7 @@
 #include<vector>
 #include<algorithm>
 #include<iomanip>
+#include<ctime>
 
 #include"GameState.h"
 #include"Matrix.h"
@@ -12,8 +13,23 @@ using namespace std;
 //shortcut for such a long class name
 typedef GameState gs;
 
-//free function's declarations
-void setPenalties();
+void setPenalties()
+{
+	//p - penalties
+	//{field, value}
+	vector<vector<int>> p = {
+		{ 4, -1 }, { 5, -3 }, { 6, -5 }, { 7, -7 }, { 13, -1 }, { 14, -3 }, { 15, -5 }, { 20, -1 }, { 24, -1 },
+		{ 25, -3 }, { 26, -5 }
+	};
+	for (int p_i = 0; p_i < p.size(); p_i++)			//p_i - penalty index
+	{
+		GameState::gameBoard[p[p_i][0]] = p[p_i][1];	//set penalty on proper board tile, 
+		//value of penalty's field is nr 0  in each p subarray
+		//value of the penalty is nr 1 element in each p subarray
+	}
+	for (int i = 0; i < 6; i++)
+		GameState::gameBoard[N + i] = END_OF_BOARD;
+}
 
 
 void generateMatrix(Matrix &M)
@@ -51,15 +67,17 @@ void calculateUnknownsFromMatrix(Matrix &M)
 	cout << "Gauss took:             " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
 }
 
-void runMonteCarloSimulation(MonteCarloSimulation &monte)
+void runMonteCarloSimulation(MonteCarloSimulation &monte,int iterations)
 {
 	clock_t start = clock();
-	monte.play();										//simulate random play million times
+	monte.play(iterations);				//simulate random play million times
 	cout << "Monte Carlo took:       " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
 //--INITIALIZATIONS
+
+	srand(time(NULL));
 	gs::queue.reserve(1000);//I need to make sure that push_pack on vector is O(1). 
 							//If there would be a lack of space in allocated memory,
 							//vector would deallocate whole content and rewrite it in bigger memory area(I try to avoid this).
@@ -84,7 +102,10 @@ int _tmain(int argc, _TCHAR* argv[])
 //--RUN THREE ALGORITHMS
 	calculateUnknownsFromMatrix(M);						//run both Gauss and Gauss-Seidel matrix algorithms
 	MonteCarloSimulation monte = MonteCarloSimulation();//instance of third method
-	runMonteCarloSimulation(monte);						//run simulation for monte
+	runMonteCarloSimulation(monte,1000);					//run simulation for monte
+	runMonteCarloSimulation(monte, 10000);
+	runMonteCarloSimulation(monte, 100000);
+	runMonteCarloSimulation(monte, 1000000);
 //---------------------------------------------------------------------------------------------------------------------
 
 
@@ -92,6 +113,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	M.displayResults();									//show results of both matrix algorithms
 	monte.displayResult();								//show result of monte-carlo algorithm
 //---------------------------------------------------------------------------------------------------------------------	
+
 
 //--BOARD DISPLAYING at the end
 	cout << endl << endl<< "How this board looks like..." << endl;
@@ -102,17 +124,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 }
 
-void setPenalties()
-{
-	//p - penalties
-	//{field, value}
-	vector<vector<int>> p = { { 2, -1 }, { 4, -1 }, { 6, -1 }, { 11, -1 }, { 13, -1 }, { 15, -14 }, { 20, -1 }, { 22, -1 }, { 24,-1 }, { 26, -25 } };	
-	for (int p_i = 0; p_i < p.size(); p_i++)			//p_i - penalty index
-	{
-		GameState::gameBoard[p[p_i][0]] = p[p_i][1];	//set penalty on proper board tile, 
-														//value of penalty's field is nr 0  in each p subarray
-														//value of the penalty is nr 1 element in each p subarray
-	}
-	for (int i = 0; i < 6; i++)
-		GameState::gameBoard[N + i] = END_OF_BOARD;
-}
