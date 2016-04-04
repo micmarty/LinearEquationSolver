@@ -17,41 +17,54 @@ void setPenalties();
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	gs::queue.reserve(1000);
 	setPenalties();
 
 	////create first state -  x(1,0,0);
-	//GameState initial = GameState(1, 0, 0);
+	GameState initial = GameState(1, 0, 0);
 
-	////create our matrix, that is our main calculation's structure
-	//Matrix M = Matrix();
+	//create our matrix, that is our main calculation's structure
+	Matrix M = Matrix();
+
+	
+
+	gs::queue.push_back(&initial);	//add as first gamestate
+	//do the same for every gamestate in the queue
+	clock_t start;
+	start = clock();
+	int i;
+	for (i = 0; i < gs::queue.size(); i++)
+		gs::queue[i]->fillQueue();
 
 
-	//gs::queue.push_back(&initial);	//add as first gamestate
-	////do the same for every gamestate in the queue
-	//for (int i = 0; i < gs::queue.size(); i++)
-	//{	
-	//	gs::queue[i]->fillQueue();
-	//}
-	////loops can't be merged
-	//for (int i = 0; i < gs::queue.size(); i++)
-	//{
-	//	gs::queue[i]->fillEquation();
-	//	M.pushRow(gs::queue[i]->getEquation());
-	//}
-	//	
-	////all calculations'done
-	////now matrix is completely filled with data
+	cout << "queue loops:"<<i<<"  " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
+	//loops can't be merged
+	start = clock();
+	for (i = 0; i < gs::queue.size(); i++)
+	{
+		
+		gs::queue[i]->fillEquation();
+		
+		M.pushRow(gs::queue[i]->getEquation());
+		
+	}
+	cout << "equa loops:" << i << "  " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
+	//all calculations'done
+	//now matrix is completely filled with data
 
-	////make a copy before modifying it
-	//vector<vector<double>> copyofM= M.getMatrix();
-	//M.gaussSeidel();
-	//
-	////load matrix from copy
-	//M.loadMatrix(copyofM);
-	//M.gaussElimination();
+	//make a copy before modifying it
 
-	////show results
-	//M.displayResults();
+	
+	vector<vector<double>> copyofM= M.getMatrix();
+	
+	M.gaussSeidel();
+	
+	//load matrix from copy
+	M.loadMatrix(copyofM);
+	M.gaussElimination();
+
+	//show results
+	M.displayResults();
 
 
 	MonteCarloSimulation monte = MonteCarloSimulation();

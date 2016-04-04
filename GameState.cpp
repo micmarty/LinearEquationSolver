@@ -27,13 +27,12 @@ GameState::GameState(int g, int a, int b)
 	variablesUsed = 0;
 }
 
-bool GameState::elementFound(GameState* neededElement,int foundAt)
+bool GameState::elementFound(GameState* neededElement,int atPos)
 {
-	for (int i = 0; i < GameState::queue.size(); i++){
-		if (*GameState::queue[i] == *neededElement && i == foundAt){
-			return true;
-		}
+	if (*GameState::queue[atPos] == *neededElement){
+		return true;
 	}
+	
 	return false;
 }
 
@@ -66,6 +65,8 @@ bool GameState::operator==(const GameState &r)
 
 void GameState::fillQueue()
 {
+	
+
  	//printf("x(%d, %d, %d) = ", g, a, b);
 	int e = g == 1 ? 2 : 1;			//e - enemy
 
@@ -166,16 +167,18 @@ void GameState::fillQueue()
 		
 
 	}
+	
 	//cout << c << endl;
-	for (int i = 0; i <variablesUsed; i++)
-		cout << factors[i] << " ";
-	cout << "|" << endl;
+	//for (int i = 0; i <variablesUsed; i++)
+		//cout << factors[i] << " ";
+	//cout << "|" << endl;
 	//cout << "\b\b\b\033[K" << endl;//deletes excessive ' + 'sign
 	//cout << variablesUsed << endl;
 }
 
 void GameState::fillEquation()
 {
+	//idz po kolumnach w macierzy(jeden wiersz)
 	for (int i = 0; i < queue.size(); i++)
 	{
 		//if proper position, put '1' in here (executes only once)
@@ -188,8 +191,10 @@ void GameState::fillEquation()
 		{
 			int notFound = 0;	//how many misses during lookup 
 
+			//dla kazdego wygenerowanego przez obiekt stanu
 			for (int g_i = 0; g_i < generatedStates.size(); g_i++)
 			{
+				//sprawdz czy wystêpuje w queue
 				if (elementFound(generatedStates[g_i],i))
 				{
 					equation.push_back(-factors[g_i]);	//every further element is substracted from 1

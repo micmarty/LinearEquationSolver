@@ -54,5 +54,4 @@ void MonteCarloSimulation::play()
 void MonteCarloSimulation::displayResult()
 {
 	cout << "x(1,0,0) = Monte Carlo Simulation\t" << setprecision(36) << probability << endl;
-	cout << player1winsCounter;
 }
