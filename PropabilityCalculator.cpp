@@ -15,80 +15,103 @@ typedef GameState gs;
 //free function's declarations
 void setPenalties();
 
-int _tmain(int argc, _TCHAR* argv[])
+
+void generateMatrix(Matrix &M)
 {
-	gs::queue.reserve(1000);
-	setPenalties();
+	clock_t start = clock();
+	int i;//iterator for further loops
 
-	////create first state -  x(1,0,0);
-	GameState initial = GameState(1, 0, 0);
-
-	//create our matrix, that is our main calculation's structure
-	Matrix M = Matrix();
-
-	
-
-	gs::queue.push_back(&initial);	//add as first gamestate
-	//do the same for every gamestate in the queue
-	clock_t start;
-	start = clock();
-	int i;
-	for (i = 0; i < gs::queue.size(); i++)
+	for (i = 0; i < gs::queue.size(); i++)//do the same for every gamestate in the queue
 		gs::queue[i]->fillQueue();
 
 
-	cout << "queue loops:"<<i<<"  " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
-	//loops can't be merged
-	start = clock();
+	//loops ^    can't be merged.Queue must be filled completely before we enter the next loop.
 	for (i = 0; i < gs::queue.size(); i++)
 	{
-		
-		gs::queue[i]->fillEquation();
-		
+		gs::queue[i]->fillEquation();//for every game state in queue, generate linear equation, so that we can push the row into matrix
 		M.pushRow(gs::queue[i]->getEquation());
-		
+
 	}
-	cout << "equa loops:" << i << "  " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
+	cout << "generating matrix took: " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
+}
+
+void calculateUnknownsFromMatrix(Matrix &M)
+{
+	clock_t start=clock();
+	//make a copy before modifying it
+	vector<vector<double>> copyofM = M.getMatrix();
+
+	M.gaussSeidel();				//first matrix algorithm
+	cout << "Gauss-Seidel took:      " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
+
+	M.loadMatrix(copyofM);			//load matrix from copy
+
+	start = clock();
+	M.gaussElimination();			//second matrix algorithm
+	cout << "Gauss took:             " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
+}
+
+void runMonteCarloSimulation(MonteCarloSimulation &monte)
+{
+	clock_t start = clock();
+	monte.play();										//simulate random play million times
+	cout << "Monte Carlo took:       " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
+}
+int _tmain(int argc, _TCHAR* argv[])
+{
+//--INITIALIZATIONS
+	gs::queue.reserve(1000);//I need to make sure that push_pack on vector is O(1). 
+							//If there would be a lack of space in allocated memory,
+							//vector would deallocate whole content and rewrite it in bigger memory area(I try to avoid this).
+							//1000 is enough for N=28
+	
+	setPenalties();			//create proper board(overwrite default '1', where needed with penaulty value)
+
+	
+	GameState initial = GameState(1, 0, 0);//create first state -  x(1,0,0);
+	Matrix M = Matrix();//create our matrix, that is our main calculation's structure
+	gs::queue.push_back(&initial);	//add as first gamestate
+//---------------------------------------------------------------------------------------------------------------------
+
+
+//--GENERATING MATRIX FOR GAME
+	generateMatrix(M);				
 	//all calculations'done
 	//now matrix is completely filled with data
-
-	//make a copy before modifying it
-
-	
-	vector<vector<double>> copyofM= M.getMatrix();
-	
-	M.gaussSeidel();
-	
-	//load matrix from copy
-	M.loadMatrix(copyofM);
-	M.gaussElimination();
-
-	//show results
-	M.displayResults();
+//---------------------------------------------------------------------------------------------------------------------
 
 
-	MonteCarloSimulation monte = MonteCarloSimulation();
-	monte.play();
-	monte.displayResult();
+//--RUN THREE ALGORITHMS
+	calculateUnknownsFromMatrix(M);						//run both Gauss and Gauss-Seidel matrix algorithms
+	MonteCarloSimulation monte = MonteCarloSimulation();//instance of third method
+	runMonteCarloSimulation(monte);						//run simulation for monte
+//---------------------------------------------------------------------------------------------------------------------
 
-	//helpful board displaying
+
+//--DISPLAY RESULTS - probabilities for three methods 
+	M.displayResults();									//show results of both matrix algorithms
+	monte.displayResult();								//show result of monte-carlo algorithm
+//---------------------------------------------------------------------------------------------------------------------	
+
+//--BOARD DISPLAYING at the end
 	cout << endl << endl<< "How this board looks like..." << endl;
 	for (int i = 0; i < GameState::gameBoard.size()-6; i++)
 		cout << "|" << setw(3) << GameState::gameBoard[i];
 	cout << endl;
-
+//---------------------------------------------------------------------------------------------------------------------
 	return 0;
 }
 
 void setPenalties()
 {
-	//NO PENALTIES AT THIS TIME
-	vector<vector<int>> p = { { 2, -1 }, { 4, -1 }, { 6, -1 }, { 11, -1 }, { 13, -1 }, { 15, -14 }, { 20, -1 }, { 22, -1 }, { 24,
-		-1 }, { 26, -25 } };	//p - penalties
+	//p - penalties
+	//{field, value}
+	vector<vector<int>> p = { { 2, -1 }, { 4, -1 }, { 6, -1 }, { 11, -1 }, { 13, -1 }, { 15, -14 }, { 20, -1 }, { 22, -1 }, { 24,-1 }, { 26, -25 } };	
 	for (int p_i = 0; p_i < p.size(); p_i++)			//p_i - penalty index
 	{
-		GameState::gameBoard[p[p_i][0]] = p[p_i][1];						//set penalty on proper board tile, 
-		//value of the penelty is nr1 element in each p subarray
+		GameState::gameBoard[p[p_i][0]] = p[p_i][1];	//set penalty on proper board tile, 
+														//value of penalty's field is nr 0  in each p subarray
+														//value of the penalty is nr 1 element in each p subarray
 	}
 	for (int i = 0; i < 6; i++)
 		GameState::gameBoard[N + i] = END_OF_BOARD;
