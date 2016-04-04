@@ -4,6 +4,7 @@
 #include<algorithm>
 #include<iomanip>
 #include<ctime>
+#include<Windows.h>
 
 #include"GameState.h"
 #include"Matrix.h"
@@ -78,6 +79,9 @@ int _tmain(int argc, _TCHAR* argv[])
 //--INITIALIZATIONS
 
 	srand(time(NULL));
+	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN|FOREGROUND_RED|FOREGROUND_BLUE |  BACKGROUND_GREEN );
+	cout << "1. TIME CONSUMED [s]" << endl;
 	gs::queue.reserve(1000);//I need to make sure that push_pack on vector is O(1). 
 							//If there would be a lack of space in allocated memory,
 							//vector would deallocate whole content and rewrite it in bigger memory area(I try to avoid this).
@@ -110,16 +114,21 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 //--DISPLAY RESULTS - probabilities for three methods 
+	
+	SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE | BACKGROUND_BLUE);
+	cout << "2. PROBABILITY OF 1ST PLAYER WINNING" << endl;
 	M.displayResults();									//show results of both matrix algorithms
 	monte.displayResult();								//show result of monte-carlo algorithm
+	cout << "-----------------------------------------------------------------" << endl;
 //---------------------------------------------------------------------------------------------------------------------	
 
 
 //--BOARD DISPLAYING at the end
-	cout << endl << endl<< "How this board looks like..." << endl;
+	SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE | BACKGROUND_RED);
+	cout << "3. HOW THIS BOARD LOOKS LIKE..." << endl;
 	for (int i = 0; i < GameState::gameBoard.size()-6; i++)
 		cout << "|" << setw(3) << GameState::gameBoard[i];
-	cout << endl;
+	cout << endl << endl << endl;
 //---------------------------------------------------------------------------------------------------------------------
 	return 0;
 }

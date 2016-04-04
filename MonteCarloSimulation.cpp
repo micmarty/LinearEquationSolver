@@ -2,6 +2,7 @@
 #include"GameState.h"
 #include<iostream>
 #include<iomanip>
+
 using namespace std;
 
 #define WON 1
@@ -55,5 +56,5 @@ void MonteCarloSimulation::play(int iterations)
 void MonteCarloSimulation::displayResult()
 {
 	for (int i = 0; i < results.size();i++)
-		cout << "x(1,0,0) = Monte Carlo Simulation\t" << setprecision(36) << results[i]<<" for "<<iterationsNumber[i]<<" iterations" << endl;
+		cout <<"x(1,0,0) = Monte Carlo Simulation\t" << setprecision(36) << results[i] << " for " << iterationsNumber[i] << " iterations" << endl;
 }
