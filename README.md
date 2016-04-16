@@ -26,12 +26,15 @@ The algorithm is generating a linear equation for each gamestate,
 then every equation is put into matrix(squared).
 
 for example:
-a - position of the first player
-b - posiiton of the second player
-g - which player is currently rolling a dice
+- a - position of the first player
+- b - posiiton of the second player
+- g - which player is currently rolling a dice
 
 x(g,a,b);
 
-..............................................
+TODO describe each one in details
+
 NEED TO FINISH THIS README
+
 ..............................................
+
