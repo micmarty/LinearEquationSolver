@@ -1,10 +1,8 @@
-#include "stdafx.h"
 #include<iostream>
 #include<vector>
 #include<algorithm>
 #include<iomanip>
 #include<ctime>
-#include<Windows.h>
 
 #include"GameState.h"
 #include"Matrix.h"
@@ -74,13 +72,13 @@ void runMonteCarloSimulation(MonteCarloSimulation &monte,int iterations)
 	monte.play(iterations);				//simulate random play million times
 	cout << "Monte Carlo took:       " << (clock() - start) / (double)CLOCKS_PER_SEC << endl;
 }
-int _tmain(int argc, _TCHAR* argv[])
+int main()
 {
 //--INITIALIZATIONS
 
 	srand(time(NULL));
-	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN|FOREGROUND_RED|FOREGROUND_BLUE |  BACKGROUND_GREEN );
+	//HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	//SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN|FOREGROUND_RED|FOREGROUND_BLUE |  BACKGROUND_GREEN );
 	cout << "1. TIME CONSUMED [s]" << endl;
 	gs::queue.reserve(1000);//I need to make sure that push_pack on vector is O(1). 
 							//If there would be a lack of space in allocated memory,
@@ -115,7 +113,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 //--DISPLAY RESULTS - probabilities for three methods 
 	
-	SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE | BACKGROUND_BLUE);
+	//SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE | BACKGROUND_BLUE);
 	cout << "2. PROBABILITY OF 1ST PLAYER WINNING" << endl;
 	M.displayResults();									//show results of both matrix algorithms
 	monte.displayResult();								//show result of monte-carlo algorithm
@@ -124,7 +122,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 //--BOARD DISPLAYING at the end
-	SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE | BACKGROUND_RED);
+	//SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE | BACKGROUND_RED);
 	cout << "3. HOW THIS BOARD LOOKS LIKE..." << endl;
 	for (int i = 0; i < GameState::gameBoard.size()-6; i++)
 		cout << "|" << setw(3) << GameState::gameBoard[i];
